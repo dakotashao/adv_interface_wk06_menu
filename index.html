@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu</title>
+<style>
+  :root { --bg: #ffffff; --tile: #f5f5f5; --ink: #111113; --muted: #6f7177; --chip: #ffffff; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0 10px 10px;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 17px/1.3 -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 16px 6px 18px;
+  }
+  header h1 { margin: 0; font: inherit; }
+  header p { margin: 0; color: var(--muted); text-align: right; }
+
+  /* Three across at most, then two, then one. */
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px)  { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+  .tile {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--tile);
+    color: inherit;
+    text-decoration: none;
+    container-type: inline-size;
+  }
+  /* Each tile shows the live prototype itself, framed on the component and nothing else.
+     data-vw   width the page is drawn at (default 1200; smaller makes everything look bigger)
+     data-crop "x,y,w" the part of that page the tile shows (height follows the 3:2 tile)
+     data-hide selector for controls to hide inside the preview
+     data-loop controls to press in turn, forever, so the preview keeps replaying its animation */
+  .tile iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1200px;
+    height: 800px;
+    border: 0;
+    transform-origin: 0 0;
+    transform: scale(0.3);
+    pointer-events: none;
+  }
+  .tile .label {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    padding: 7px 11px;
+    border-radius: 7px;
+    background: var(--chip);
+    font-size: 14px;
+    opacity: 0;
+    transform: translateY(3px);
+    transition: opacity 160ms ease, transform 160ms ease;
+  }
+  .tile:hover .label, .tile:focus-visible .label { opacity: 1; transform: none; }
+  .tile:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  @media (hover: none) { .tile .label { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .tile .label { transition: none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Menu</h1>
+  <p>Advanced Interface, Week 6</p>
+</header>
+<main class="grid">
+  <a class="tile" href="liquid-dial/" data-vw="1200" data-crop="260,120,680" data-hide=".row"><iframe data-src="liquid-dial/" title="" loading="lazy" tabindex="-1" aria-hidden="true"></iframe><span class="label">Liquid Dial</span></a>
+</main>
+<script>
+  // Frame each preview on its component and keep it scaled to the tile's width.
+  const frames = new Map();
+  // Every visit loads the previews fresh, so a tile never shows a copy the browser kept from an older deploy.
+  const stamp = Date.now().toString(36);
+  const fit = new ResizeObserver(entries => {
+    for (const e of entries) {
+      const { frame, x, y, w } = frames.get(e.target), s = e.contentRect.width / w;
+      frame.style.transform = `translate(${-x * s}px, ${-y * s}px) scale(${s})`;
+    }
+  });
+  document.querySelectorAll('.tile').forEach(tile => {
+    const frame = tile.querySelector('iframe');
+    const vw = +tile.dataset.vw || 1200;
+    const [x, y, w] = (tile.dataset.crop || `0,0,${vw}`).split(',').map(Number);
+    frame.style.width = vw + 'px';
+    frame.style.height = Math.round(vw * 2 / 3) + 'px';
+    frames.set(tile, { frame, x, y, w });
+    if (tile.dataset.hide) {
+      const hide = () => {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc || !doc.head || doc.getElementById('thumb-hide')) return;
+          const style = doc.createElement('style');
+          style.id = 'thumb-hide';
+          style.textContent = `${tile.dataset.hide} { visibility: hidden !important; }`;
+          doc.head.append(style);
+        } catch (err) { /* preview stays as the page draws it */ }
+      };
+      frame.addEventListener('load', hide);
+      hide();
+    }
+    const url = new URL(frame.dataset.src, location.href);
+    url.searchParams.set('v', stamp);
+    frame.src = url.href;
+    fit.observe(tile);
+  });
+
+  // Nobody can click inside a preview, so each tile presses its own controls in turn and the
+  // animation keeps replaying. Tiles are staggered so they do not all move on the same beat.
+  [...document.querySelectorAll('.tile[data-loop]')].forEach((tile, i) => {
+    const frame = tile.querySelector('iframe');
+    const steps = tile.dataset.loop.split('|').map(s => s.trim());
+    let n = 0;
+    setTimeout(() => setInterval(() => {
+      if (document.hidden) return;
+      try {
+        const target = frame.contentDocument && frame.contentDocument.querySelector(steps[n % steps.length]);
+        if (target) { target.click(); n++; }
+      } catch (err) { /* preview keeps whatever it is showing */ }
+    }, 2800), 1500 + i * 450);
+  });
+</script>
+</body>
+</html>
