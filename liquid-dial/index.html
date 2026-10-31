@@ -128,7 +128,7 @@ svg.line path{fill:none;stroke-linecap:round;transition:opacity .35s}
 .ic.st::after{opacity:0}
 .halo{position:absolute;left:0;top:0;width:100px;height:100px;margin:-50px 0 0 -50px;border-radius:50%;pointer-events:none;mix-blend-mode:screen;transition:width .45s var(--spring),height .45s var(--spring),margin .45s,opacity .35s,background .3s}
 .kc{position:absolute;left:0;top:0;min-width:15px;height:15px;margin:-7.5px;padding:0 3px;box-sizing:border-box;border-radius:4.5px;display:grid;place-items:center;font:500 9.5px/1 var(--font);color:rgba(255,255,255,.7);background:rgba(36,30,26,.42);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.28);pointer-events:none;opacity:0;transition:opacity .25s,transform .5s var(--drip)}
-.kc.show{opacity:.8}.kc.show.f{opacity:1;color:#fff;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.6)}
+.kc{display:none}
 .legend kbd{font:500 10.5px/1 var(--font);padding:2px 5px;border-radius:4px;background:rgba(0,0,0,.06);box-shadow:inset 0 0 0 .5px rgba(0,0,0,.18);color:var(--ink)}
 .legend{display:flex;flex-wrap:wrap;gap:4px 16px;justify-content:center;font:400 12px/16px var(--font);color:var(--ink-2)}
 .legend b{font-weight:500;color:var(--ink)}
@@ -179,7 +179,7 @@ svg.line path{fill:none;stroke-linecap:round;transition:opacity .35s}
       <dt>Single line</dt><dd>Readout in the core: name + value</dd>
       <dt>Left icon</dt><dd>Device icon, centred in its lobe</dd>
       <dt>Right icon</dt><dd>Selected option: drop pulled in to a 10.5 gap</dd>
-      <dt>Right shortcut</dt><dd>Keycap 1–6, 13 outside each lobe / drop</dd>
+      <dt>Right shortcut</dt><dd>Keys 1–6 jump to a lobe / drop; listed under the dial</dd>
       <dt>Submenu</dt><dd>Lobe → options; Music → songs</dd>
     </dl></div>
     <div class="spec-group"><h3>States · lobe</h3><dl>
@@ -212,7 +212,7 @@ svg.line path{fill:none;stroke-linecap:round;transition:opacity .35s}
     <div class="spec-group"><h3>Type</h3><dl>
       <dt>Family</dt><dd>Geist · Material Symbols Rounded 300</dd>
       <dt>Readout</dt><dd>Name 500 12 · value 300 11 (sliders 20)</dd>
-      <dt>Keycap</dt><dd>Geist 500 9.5 · 15 tall, radius 4.5</dd>
+      <dt>Keycap (legend)</dt><dd>Geist 500 10.5 · radius 4</dd>
     </dl></div>
     <div class="spec-group"><h3>Motion</h3><dl>
       <dt>Drip</dt><dd>cubic-bezier(.3, 1.2, .5, 1) · 500ms</dd>
