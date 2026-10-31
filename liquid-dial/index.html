@@ -11,7 +11,7 @@
 /* Layout: two backgrounds (the original blurred colour field, or the live room photo softened), switchable under the dial; one liquid dial in the middle. The open lobe becomes the hub of level two; its options sit at one fixed distance around it. */
 :root{
   color-scheme:light;
-  --page:#f6f6f6; --card:#fff; --line:#dfe0e4; --press:#eeeef1; --mono:ui-monospace,'SF Mono',Menlo,monospace; --ink:#24201c; --ink-2:rgba(36,32,28,.6);
+  --page:#f4f4f4; --card:#fff; --line:#dfe0e4; --press:#eeeef1; --mono:ui-monospace,'SF Mono',Menlo,monospace; --ink:#24201c; --ink-2:rgba(36,32,28,.6);
   --body:#3b3b3f; --white:#fff; --white-2:rgba(255,255,255,.72);
   --font:'Geist',ui-sans-serif,system-ui,-apple-system,sans-serif;
   --spring:cubic-bezier(.34,1.45,.64,1);
@@ -164,8 +164,6 @@ svg.line path{fill:none;stroke-linecap:round;transition:opacity .35s}
 .frame.lite .dn{background:rgba(255,255,255,.2);box-shadow:0 10px 28px rgba(0,0,0,.28)}
 .frame[data-bg="original"] .dn{opacity:0;pointer-events:none}
 @media (max-width:640px){.dn{right:12px;bottom:12px}}
-html:not(.tablet) .dn{display:none}
-#dnc[hidden]{display:none}
 /* light/dark body: when the room around the dial goes dark, the liquid turns pale and its icons turn dark */
 .frame{--pdc:rgba(59,59,63,.62);--offc:rgba(59,59,63,.45);--pvc:rgba(255,255,255,.38)}
 /* light glass (visionOS-style): over a dark room the body becomes thin frosted white glass; glyphs stay white and float on it */
@@ -186,6 +184,25 @@ html:not(.tablet) .dn{display:none}
 .touch{position:fixed;left:0;top:0;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:rgba(255,255,255,.26);box-shadow:0 0 0 1px rgba(255,255,255,.55),0 4px 14px rgba(0,0,0,.25);pointer-events:none;z-index:20;opacity:0;scale:.85;transition:opacity .2s ease,scale .25s var(--spring),background .2s ease}
 .touch.on{opacity:.75;scale:1}
 .touch.down{opacity:1;scale:.8;background:rgba(255,255,255,.5)}
+/* the room sits in an 11-inch tablet, the same one as on the portfolio */
+.device{position:relative;flex:none;padding:3px;border-radius:50px;
+  background:linear-gradient(180deg,#f7f8f9 0,#d9dbde 6%,#c3c6ca 50%,#d6d8db 94%,#eef0f2 100%);
+  box-shadow:0 0 0 .5px #8f9297,inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(0,0,0,.18),
+    0 60px 100px -40px rgba(20,22,26,.45),0 24px 40px -18px rgba(20,22,26,.28),0 4px 10px rgba(20,22,26,.08)}
+.device::before{content:"";position:absolute;inset:1px;border-radius:49px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(255,255,255,.55),rgba(255,255,255,0) 8%,rgba(255,255,255,0) 92%,rgba(255,255,255,.4))}
+.glass{position:relative;padding:20px;border-radius:47px;background:#0a0a0b;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 0 0 2px #000}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(118deg,rgba(255,255,255,.10) 0,rgba(255,255,255,.03) 28%,rgba(255,255,255,0) 42%)}
+.cam{position:absolute;left:50%;top:7px;width:6px;height:6px;margin-left:-3px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#3a4256 0,#14161c 55%,#08090b 100%);box-shadow:0 0 0 1px #1b1c1f}
+.btn{position:absolute;background:linear-gradient(180deg,#e6e8ea,#b9bcc0);border-radius:2px;box-shadow:0 0 0 .5px #8f9297}
+.btn.top1{top:-2.5px;left:120px;width:46px;height:3px}
+.btn.top2{top:-2.5px;left:176px;width:46px;height:3px}
+.btn.pwr{top:-2.5px;right:96px;width:52px;height:3px}
+@media (max-width:640px){.device{border-radius:34px}.device::before{border-radius:33px}.glass{padding:12px;border-radius:31px}.cam{top:3px}.frame{border-radius:20px}}
+.tablet .device,.tablet .glass{display:contents}
+.tablet .btn,.tablet .cam{display:none}
 .row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
 @media (prefers-reduced-motion:reduce){*{transition-duration:0s!important;animation:none!important}}
 </style>
@@ -198,6 +215,7 @@ html:not(.tablet) .dn{display:none}
 </defs></svg>
 
 <main>
+  <div class="device"><i class="btn top1"></i><i class="btn top2"></i><i class="btn pwr"></i><div class="glass"><span class="cam" aria-hidden="true"></span>
   <div class="frame" id="F" data-bg="room" tabindex="0" aria-label="Liquid room dial. Arrow keys or scroll turn, Space or Enter presses, Escape goes back.">
     <div class="ph"></div>
     <div class="rm" aria-hidden="true"><canvas id="room"></canvas><canvas id="tv"></canvas></div>
@@ -205,13 +223,13 @@ html:not(.tablet) .dn{display:none}
     <div class="c" id="C"></div>
     <button class="dn" id="dn" type="button" role="switch" aria-checked="true" aria-label="Daytime"><i class="dnk"></i><span class="ms sun">light_mode</span><span class="ms moon">dark_mode</span></button>
   </div>
+  </div></div>
   <div class="row">
     <div class="seg" id="seg" role="radiogroup" aria-label="Climate display"><span>Climate</span><button role="radio" data-v="level" aria-checked="true">Liquid level</button><button role="radio" data-v="beads" aria-checked="false">Beads</button><button role="radio" data-v="ticks" aria-checked="false">Tick ring</button></div>
     <div class="seg" id="lseg" role="radiogroup" aria-label="Floor lamp display"><span>Floor lamp</span><button role="radio" data-v="level" aria-checked="true">Light level</button><button role="radio" data-v="beads" aria-checked="false">Beads</button><button role="radio" data-v="ticks" aria-checked="false">Rays</button></div>
     <div class="seg" id="mseg" role="radiogroup" aria-label="Music display"><span>Music</span><button role="radio" data-v="drops" aria-checked="true">Drops</button><button role="radio" data-v="record" aria-checked="false">Record</button></div>
     <div class="legend"><span><b>Turn</b> scroll · <kbd>↑</kbd> <kbd>↓</kbd></span><span><b>Press</b> click a lobe · <kbd>Space</kbd></span><span><b>Back</b> <kbd>Esc</kbd> · click outside</span><span><b>Jump</b> <kbd>1</kbd>–<kbd>6</kbd></span><span><b>Sliders</b> drag</span></div>
     <div class="seg" id="bseg" role="radiogroup" aria-label="Background"><span>Background</span><button role="radio" data-v="original" aria-checked="false">Original</button><button role="radio" data-v="room" aria-checked="true">Room</button></div>
-    <button class="chip" id="dnc" aria-pressed="true">Day</button>
     <button class="chip" id="snd" aria-pressed="true">Sound on</button>
     <button class="chip" type="button" id="spec-btn" aria-expanded="false" aria-controls="spec">Spec</button>
   </div>
@@ -718,7 +736,7 @@ if(!reduce&&!TABLET) setInterval(()=>{ if(!s.auto||s.idle||document.hidden) retu
     else if(s.k<3){ s.of=(s.of+1)%d.opts.length; drop(1.25,.6); render(); } else { pick(); if(!s.songs) setTimeout(close,500); } } },1500);
 
 function size(){
-  const AR=1080/738, aw=innerWidth-32, ah=innerHeight-150;
+  const AR=1194/834, bz=innerWidth<=640?30:46, aw=innerWidth-32-bz, ah=innerHeight-150-bz; /* bz: the tablet bezel on both sides */
   let W=Math.min(aw,ah*AR,1100), H=W/AR; if(W<640){ W=aw; H=Math.min(ah,Math.max(H,W*1.3)); }
   if(TABLET){ W=innerWidth; H=innerHeight; }
   F.style.width=W+'px'; F.style.height=H+'px';
@@ -842,12 +860,11 @@ const basePick=pick; pick=function(){ const f=s.f; basePick();
   if(f===MUS_I) tvOff=false; if(f===iS) tvOff=DEV[iS].opts[DEV[iS].sel].label==='Night'; tvSync();
   if(s.f===iS){ const sc=SCENE[DEV[iS].opts[DEV[iS].sel].label]; DEV[iC].on=sc.ceil>=0; if(sc.ceil>=0) DEV[iC].sel=sc.ceil; DEV[iF].slider.v=sc.floor; DEV[iB].sel=sc.blinds; tableT=sc.table; pendT=sc.pend; render(); applyTheme(); } };
 const dnB=$('dn'), dnK=dnB.querySelector('.dnk');
-const dnC=$('dnc');
-const toggleDay=()=>{ dayT=dayT?0:1; tvOff=!dayT; dnB.setAttribute('aria-checked',!!dayT); dnC.textContent=dayT?'Day':'Night'; dnC.setAttribute('aria-pressed',!!dayT); drop(dayT?1.2:.7,.9);
+const toggleDay=()=>{ dayT=dayT?0:1; tvOff=!dayT; dnB.setAttribute('aria-checked',!!dayT); drop(dayT?1.2:.7,.9);
   /* the thumb travels like a drop: stretches on the way, rounds off when it lands */
   if(!reduce) dnK.animate([{scale:'1 1'},{scale:'1.45 .82',offset:.4},{scale:'.94 1.06',offset:.75},{scale:'1 1'}],{duration:520,easing:'cubic-bezier(.25,.6,.3,1)'});
   roomSync(); applyTheme(); user(); rest(); }; /* reaching for the switch means you are done with the dial: it folds back (the music keeps playing) */
-dnB.addEventListener('click',toggleDay); dnC.addEventListener('click',toggleDay);
+dnB.addEventListener('click',toggleDay);
 dnB.addEventListener('keydown',e=>{ if(e.key===' '||e.key==='Enter'){ e.stopPropagation(); } else if(e.key.startsWith('Arrow')) e.stopPropagation(); });
 /* frosted glass: a backdrop-blur twin under each blob (the goo filter can't blur what's behind it) */
 const frost=document.createElement('div'); frost.className='frost'; C.insertBefore(frost,goo);
@@ -865,7 +882,7 @@ const applyTheme=()=>{ const room=F.dataset.bg==='room', scene=DEV[iS].opts[DEV[
 /* background switch: the original colour field, or the live room behind a soft blur */
 document.querySelectorAll('#bseg button').forEach(b=>b.addEventListener('click',()=>{
   const v=b.dataset.v; F.dataset.bg=v; document.querySelectorAll('#bseg button').forEach(x=>x.setAttribute('aria-checked',x===b));
-  dnC.hidden=v!=='room'; drop(.8,.8); applyTheme(); if(v==='room') requestAnimationFrame(()=>ROOM.draw()); }));
+  drop(.8,.8); applyTheme(); if(v==='room') requestAnimationFrame(()=>ROOM.draw()); }));
 
 if(TABLET){ /* no design switches on the tablet, so it shows the chosen styles: climate as beads, lamp as light level, music as the record */
   cStyle='beads'; lStyle='level'; mStyle='record';
