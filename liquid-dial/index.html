@@ -123,7 +123,7 @@ svg.line path{fill:none;stroke-linecap:round;transition:opacity .35s}
 /* off devices: icon dims and a thin slash crosses it */
 .ic .ms{transition:opacity .3s}
 .ic.off .ms{opacity:.42}
-.ic.off::after{content:"";position:absolute;left:50%;top:50%;width:20px;height:1.5px;margin:-.75px 0 0 -10px;border-radius:1px;background:var(--white-2);rotate:-45deg;box-shadow:0 0 0 1px var(--body);transition:opacity .3s}
+.ic.off::after{content:none}
 .ic:not(.off)::after{content:"";opacity:0}
 .ic.st::after{opacity:0}
 .halo{position:absolute;left:0;top:0;width:100px;height:100px;margin:-50px 0 0 -50px;border-radius:50%;pointer-events:none;mix-blend-mode:screen;transition:width .45s var(--spring),height .45s var(--spring),margin .45s,opacity .35s,background .3s}
@@ -208,7 +208,7 @@ svg.line path{fill:none;stroke-linecap:round;transition:opacity .35s}
       <dt>Enabled</dt><dd>58 Ø, centre 98 · icon 22</dd>
       <dt>Hover</dt><dd>Lobe takes focus, pointer follows</dd>
       <dt>Pressed</dt><dd>66 Ø, centre 100 · core scale 0.95</dd>
-      <dt>Off</dt><dd>Icon 42% + 20 × 1.5 slash</dd>
+      <dt>Off</dt><dd>Icon dims to 42%</dd>
       <dt>Open lobe</dt><dd>Icon becomes power / play · pause; tap toggles</dd>
     </dl></div>
     <div class="spec-group"><h3>States · option drop</h3><dl>
@@ -763,7 +763,7 @@ function roomSync(){
 const baseRender=render; render=function(){ baseRender(); roomSync(); };
 const basePick=pick; pick=function(){ basePick();
   if(s.f===iS){ const sc=SCENE[DEV[iS].opts[DEV[iS].sel].label]; DEV[iC].on=sc.ceil>=0; if(sc.ceil>=0) DEV[iC].sel=sc.ceil; DEV[iF].slider.v=sc.floor; DEV[iB].sel=sc.blinds; tableT=sc.table; render(); } };
-$('dn').addEventListener('click',e=>{ dayT=dayT?0:1; e.currentTarget.textContent=dayT?'Day':'Night'; e.currentTarget.setAttribute('aria-pressed',!!dayT); roomSync(); });
+$('dn').addEventListener('click',e=>{ dayT=dayT?0:1; e.currentTarget.textContent=dayT?'Day':'Night'; e.currentTarget.setAttribute('aria-pressed',!!dayT); roomSync(); applyTheme(); });
 /* frosted glass: a backdrop-blur twin under each blob (the goo filter can't blur what's behind it) */
 const frost=document.createElement('div'); frost.className='frost'; C.insertBefore(frost,goo);
 const gb=[...goo.querySelectorAll('.b')].map(b=>{ const i=document.createElement('i'); if(b.classList.contains('core')) i.className='core'; frost.appendChild(i); return [b,i]; });
@@ -773,7 +773,7 @@ function frostLoop(){ if(!F.classList.contains('lite')){ frostRaf=0; return; }
 /* the dial follows the room: dark room -> pale liquid, bright room -> dark liquid (with a little hysteresis so it doesn't flicker) */
 let roomL=1;
 const applyTheme=()=>{ const room=F.dataset.bg==='room', lite=F.classList.contains('lite');
-  F.classList.toggle('lite',room&&(lite?roomL<.44:roomL<.41)); if(F.classList.contains('lite')&&!frostRaf) frostRaf=requestAnimationFrame(frostLoop); };
+  F.classList.toggle('lite',room&&!dayT&&(lite?roomL<.44:roomL<.41)); /* daytime always keeps the dark dial */ if(F.classList.contains('lite')&&!frostRaf) frostRaf=requestAnimationFrame(frostLoop); };
 ROOM.onLum=L=>{ roomL=L; applyTheme(); };
 /* background switch: the original colour field, or the live room behind a soft blur */
 document.querySelectorAll('#bseg button').forEach(b=>b.addEventListener('click',()=>{
