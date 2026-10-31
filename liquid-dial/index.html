@@ -665,10 +665,10 @@ if(!reduce) setInterval(()=>{ if(!s.auto||s.idle||document.hidden) return; n++; 
     else if(s.k<3){ s.of=(s.of+1)%d.opts.length; drop(1.25,.6); render(); } else { pick(); if(!s.songs) setTimeout(close,500); } } },1500);
 
 function size(){
-  const AR=1080/738, aw=innerWidth-32, ah=innerHeight-80;
-  let W=Math.min(aw,ah*AR,1400), H=W/AR; if(W<640){ W=aw; H=Math.min(ah,Math.max(H,W*1.3)); }
+  const AR=1080/738, aw=innerWidth-32, ah=innerHeight-150;
+  let W=Math.min(aw,ah*AR,1100), H=W/AR; if(W<640){ W=aw; H=Math.min(ah,Math.max(H,W*1.3)); }
   F.style.width=W+'px'; F.style.height=H+'px';
-  scaleK=Math.max(.6,Math.min(1.4,Math.min(W/780,H/600)));
+  scaleK=Math.max(.6,Math.min(1,Math.min(W/900,H/690)));
   C.style.transform=`scale(${scaleK})`;
 }
 const spec=$('spec'), specBtn=$('spec-btn');
