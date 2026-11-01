@@ -225,9 +225,9 @@ svg.line path{fill:none;stroke-linecap:round;transition:opacity .35s}
   </div>
   </div></div>
   <div class="row">
-    <div class="seg" id="seg" role="radiogroup" aria-label="Climate display"><span>Climate</span><button role="radio" data-v="level" aria-checked="true">Liquid level</button><button role="radio" data-v="beads" aria-checked="false">Beads</button><button role="radio" data-v="ticks" aria-checked="false">Tick ring</button></div>
+    <div class="seg" id="seg" role="radiogroup" aria-label="Climate display"><span>Climate</span><button role="radio" data-v="level" aria-checked="false">Liquid level</button><button role="radio" data-v="beads" aria-checked="true">Beads</button><button role="radio" data-v="ticks" aria-checked="false">Tick ring</button></div>
     <div class="seg" id="lseg" role="radiogroup" aria-label="Floor lamp display"><span>Floor lamp</span><button role="radio" data-v="level" aria-checked="true">Light level</button><button role="radio" data-v="beads" aria-checked="false">Beads</button><button role="radio" data-v="ticks" aria-checked="false">Rays</button></div>
-    <div class="seg" id="mseg" role="radiogroup" aria-label="Music display"><span>Music</span><button role="radio" data-v="drops" aria-checked="true">Drops</button><button role="radio" data-v="record" aria-checked="false">Record</button></div>
+    <div class="seg" id="mseg" role="radiogroup" aria-label="Music display"><span>Music</span><button role="radio" data-v="drops" aria-checked="false">Drops</button><button role="radio" data-v="record" aria-checked="true">Record</button></div>
     <div class="legend"><span><b>Turn</b> scroll · <kbd>↑</kbd> <kbd>↓</kbd></span><span><b>Press</b> click a lobe · <kbd>Space</kbd></span><span><b>Back</b> <kbd>Esc</kbd> · click outside</span><span><b>Jump</b> <kbd>1</kbd>–<kbd>6</kbd></span><span><b>Sliders</b> drag</span></div>
     <div class="seg" id="bseg" role="radiogroup" aria-label="Background"><span>Background</span><button role="radio" data-v="original" aria-checked="false">Original</button><button role="radio" data-v="room" aria-checked="true">Room</button></div>
     <button class="chip" id="snd" aria-pressed="true">Sound on</button>
@@ -363,7 +363,7 @@ const kcO=[...Array(MAXO)].map((_,j)=>el('kc',ov,String(j+1)));
 const mid=el('mid',ov), pip=el('pip',ov), kdot=el('knobdot',ov);
 const end1=el('end',ov), end2=el('end',ov);
 /* climate display styles */
-let cStyle='level', lStyle='level';
+let cStyle='beads', lStyle='level'; /* opens as on the tablet: climate as beads, lamp as light level */
 const CSPAN=70, NB=11, NT=41;
 const COOL=[156,194,255], MIDC=[255,241,226], WARM=[255,163,107];
 const mixc=(a,b,t)=>a.map((x,i)=>Math.round(x+(b[i]-x)*t));
@@ -387,7 +387,7 @@ const styleOf=d=>d.slider.styled==='climate'?cStyle:lStyle;
 const lcol=u=>`rgb(${mixc([150,128,108],[255,244,226],u)})`;
 const halo=el('halo',C); C.insertBefore(halo,C.firstChild);
 /* music display styles */
-let mStyle='drops';
+let mStyle='record'; /* music opens as the record */
 const rec=el('recC off',ov,'<div class="lbl2"></div><div class="shine"></div><div class="hole"></div>'), lab=rec.querySelector('.lbl2');
 let rot=0, rv=0, rTarget=0;
 const isRecord=()=>mStyle==='record'&&s.open&&DEV[s.f].music;
